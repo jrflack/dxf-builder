@@ -12,7 +12,7 @@ A python package to build DXF files from dict input
 
 ## Supported shape samples:
 
- - Polyline path
+- Polyline path
 
 ```python
 {
@@ -23,11 +23,14 @@ A python package to build DXF files from dict input
         "coordinate_3": (20, 10),
         "coordinate_4": (30, 10),
     },
+    "shape_specific_data": {
+        "color": 2,
+    },
     "hatch": True or False
 }
 ```
 
--  Arc
+- Arc
 
 ```python
 {
@@ -67,7 +70,25 @@ A python package to build DXF files from dict input
             [3, 2, 6, 7],
             [0, 3, 7, 4],
         ]
+    }
+}
+```
+
+- Rectangle
+
+```python
+{
+    "type": "rectangle",
+    "xy_data": {
+        "coordinate_1": (0, 0),
+        "coordinate_2": (10, 0),
+        "coordinate_3": (10, 10),
+        "coordinate_4": (0, 10),
     },
-    "hatch": False # yet to implement hatch for mesh
+    "shape_specific_data": {
+        "is_closed": True,  # default
+        "pattern_name": "ANSI31",
+        "color": 7  # default
+    }
 }
 ```

@@ -1,12 +1,9 @@
-import ezdxf
 from ezdxf.addons.drawing import RenderContext, Frontend
 from ezdxf.addons.drawing.matplotlib import MatplotlibBackend
 from ezdxf.document import Drawing
-from ezdxf.entities import Arc, Mesh
+from ezdxf.entities import Arc, Mesh, PolylinePath, EdgePath, ArcEdge
 from ezdxf.entities.hatch import Hatch
 from ezdxf.entities.polyline import Polyline
-from ezdxf.lldxf.tags import Tags
-from ezdxf.lldxf.tagwriter import TagCollector
 from matplotlib import pyplot as plt
 
 from src.dxf_builder import DxfBuilder
@@ -64,18 +61,19 @@ def test_it_builds_shape_3():
 
     entity: Hatch
 
-    with open("test_shape_3.dxf", "r") as f:
-        expected_doc = ezdxf.read(f)
-        expected_hatch = next(entity for entity in expected_doc.entities)
-        writer = TagCollector()
-        expected_hatch.export_dxf(writer)
-        expected = Tags(writer.tags)
+    assert entity.has_solid_fill is True
 
-    writer = TagCollector()
-    entity.export_dxf(writer)
-    tags = Tags(writer.tags)
+    assert len(entity.paths.paths) == 1
+    path = entity.paths.paths[0]
 
-    assert tags == expected
+    assert isinstance(path, EdgePath)
+    assert len(path.edges) == 1
+    edge = path.edges[0]
+    assert isinstance(edge, ArcEdge)
+
+    assert edge.center == shapes[2]["xy_data"]["xy"]
+    assert edge.radius == shapes[2]["shape_specific_data"]["radius"]
+    assert edge.end_angle == shapes[2]["shape_specific_data"]["angle"]
 
 
 def test_it_builds_shape_4():
@@ -89,18 +87,9 @@ def test_it_builds_shape_4():
 
     entity: Arc
 
-    with open("test_shape_4.dxf", "r") as f:
-        expected_doc = ezdxf.read(f)
-        expected_entity = next(entity for entity in expected_doc.entities)
-        writer = TagCollector()
-        expected_entity.export_dxf(writer)
-        expected = Tags(writer.tags)
-
-    writer = TagCollector()
-    entity.export_dxf(writer)
-    tags = Tags(writer.tags)
-
-    assert tags == expected
+    assert entity.dxf.get("center") == shapes[3]["xy_data"]["xy"]
+    assert entity.dxf.get("radius") == shapes[3]["shape_specific_data"]["radius"]
+    assert entity.dxf.get("end_angle") == shapes[3]["shape_specific_data"]["angle"]
 
 
 def test_it_builds_shape_5():
@@ -119,11 +108,33 @@ def test_it_builds_shape_5():
         assert vertex == expected
 
     for face, expected in zip(entity.faces, list(shapes[5]["shape_specific_data"]["faces"])):
-        assert face.tolist() == expected
+        assert face.tolist() == list(expected)
 
 
-def show_plot(doc: Drawing) -> None:
-    if SHOW_PLOT is False:
+def test_it_builds_shape_6():
+    doc = DxfBuilder(shapes[6]).get_doc()
+
+    show_plot(doc)
+
+    assert len(doc.entities) == 1
+    entity = next(entity for entity in doc.entities)
+
+    entity: Hatch
+
+    assert len(entity.paths.paths) == 1
+    path = entity.paths.paths[0]
+
+    path: PolylinePath
+
+    for vertex, expected in zip(path.vertices, list(shapes[6]["xy_data"].values())):
+        vertex = vertex[0], vertex[1]
+        assert vertex == expected
+
+    assert entity.has_pattern_fill is True
+
+
+def show_plot(doc: Drawing, enabled: bool = SHOW_PLOT) -> None:
+    if enabled is False:
         return
 
     fig = plt.figure()

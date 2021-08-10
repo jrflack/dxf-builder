@@ -70,15 +70,30 @@ shapes = [
             "vertex_8": (0, 1, 1),
         },
         "shape_specific_data": {
-          "faces": [
-              [0, 1, 2, 3],
-              [4, 5, 6, 7],
-              [0, 1, 5, 4],
-              [1, 2, 6, 5],
-              [3, 2, 6, 7],
-              [0, 3, 7, 4],
-          ]
+            "faces": [
+                (0, 1, 2, 3),
+                (4, 5, 6, 7),
+                (0, 1, 5, 4),
+                (1, 2, 6, 5),
+                (3, 2, 6, 7),
+                (0, 3, 7, 4),
+            ],
+            "color": 3
         },
         "hatch": False
+    },
+    {
+        "type": "rectangle",
+        "xy_data": {
+            "coordinate_1": (0, 0),
+            "coordinate_2": (10, 0),
+            "coordinate_3": (10, 10),
+            "coordinate_4": (0, 10),
+        },
+        "shape_specific_data": {
+            "is_closed": True,  # default
+            "pattern_name": "ANSI31",
+            "color": 7  # default
+        }
     }
 ]
