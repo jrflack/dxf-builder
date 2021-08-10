@@ -10,6 +10,40 @@ A python package to build DXF files from dict input
 
 [comment]: <> (```)
 
+## Usage
+```python
+from dxf_builder import DxfBuilder
+
+# Export the document into a file
+
+DxfBuilder([
+    {
+        "type": "lines",
+        "xy_data": {
+            ...
+        },
+        "hatch": False
+    }    
+]).saveas("multiple_shapes.dxf")
+
+# or
+
+DxfBuilder({
+        "type": "lines",
+        "xy_data": {
+            ...
+        },
+        "hatch": False
+    }).saveas("single_shape.dxf")
+
+
+# Get an access to the document instance
+
+doc: ezdxf.document.Drawing
+doc = DxfBuilder({...}).get_doc()
+
+```
+
 ## Supported shape samples:
 
 - Polyline path
