@@ -1,3 +1,5 @@
+import pytest
+from _pytest.config import Config
 from ezdxf.addons.drawing import RenderContext, Frontend
 from ezdxf.addons.drawing.matplotlib import MatplotlibBackend
 from ezdxf.document import Drawing
@@ -9,13 +11,16 @@ from matplotlib import pyplot as plt
 from src.dxf_builder import DxfBuilder
 from .data import shapes
 
-SHOW_PLOT = False
+
+@pytest.fixture()
+def should_show_plot(pytestconfig: Config) -> bool:
+    return pytestconfig.getoption("show_plot")
 
 
-def test_it_builds_shape_1():
+def test_it_builds_shape_1(should_show_plot: bool):
     doc = DxfBuilder(shapes[0]).get_doc()
 
-    show_plot(doc)
+    show_plot(doc, should_show_plot)
 
     assert len(doc.entities) == 1
     entity = next(entity for entity in doc.entities)
@@ -31,10 +36,10 @@ def test_it_builds_shape_1():
         assert (vx, vy,) == coord
 
 
-def test_it_builds_shape_2():
+def test_it_builds_shape_2(should_show_plot: bool):
     doc = DxfBuilder(shapes[1]).get_doc()
 
-    show_plot(doc)
+    show_plot(doc, should_show_plot)
 
     assert len(doc.entities) == 1
     entity = next(entity for entity in doc.entities)
@@ -50,10 +55,10 @@ def test_it_builds_shape_2():
         assert (vx, vy,) == coord
 
 
-def test_it_builds_shape_3():
+def test_it_builds_shape_3(should_show_plot: bool):
     doc = DxfBuilder(shapes[2]).get_doc()
 
-    show_plot(doc)
+    show_plot(doc, should_show_plot)
 
     assert len(doc.entities) == 1
     entity = next(entity for entity in doc.entities)
@@ -76,10 +81,10 @@ def test_it_builds_shape_3():
     assert edge.end_angle == shapes[2]["shape_specific_data"]["angle"]
 
 
-def test_it_builds_shape_4():
+def test_it_builds_shape_4(should_show_plot: bool):
     doc = DxfBuilder(shapes[3]).get_doc()
 
-    show_plot(doc)
+    show_plot(doc, should_show_plot)
 
     assert len(doc.entities) == 1
     entity = next(entity for entity in doc.entities)
@@ -92,10 +97,10 @@ def test_it_builds_shape_4():
     assert entity.dxf.get("end_angle") == shapes[3]["shape_specific_data"]["angle"]
 
 
-def test_it_builds_shape_5():
+def test_it_builds_shape_5(should_show_plot: bool):
     doc = DxfBuilder(shapes[5]).get_doc()
 
-    show_plot(doc)
+    show_plot(doc, should_show_plot)
 
     assert len(doc.entities) == 1
     entity = next(entity for entity in doc.entities)
@@ -111,10 +116,10 @@ def test_it_builds_shape_5():
         assert face.tolist() == list(expected)
 
 
-def test_it_builds_shape_6():
+def test_it_builds_shape_6(should_show_plot: bool):
     doc = DxfBuilder(shapes[6]).get_doc()
 
-    show_plot(doc)
+    show_plot(doc, should_show_plot)
 
     assert len(doc.entities) == 1
     entity = next(entity for entity in doc.entities)
@@ -133,8 +138,8 @@ def test_it_builds_shape_6():
     assert entity.has_pattern_fill is True
 
 
-def show_plot(doc: Drawing, enabled: bool = SHOW_PLOT) -> None:
-    if enabled is False:
+def show_plot(doc: Drawing, show: bool = False) -> None:
+    if show is False:
         return
 
     fig = plt.figure()
