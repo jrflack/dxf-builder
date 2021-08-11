@@ -18,5 +18,18 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
+    install_requires=[
+        "ezdxf==0.16.5"
+    ],
+    tests_require=[
+        "pytest",
+        "matplotlib"
+    ],
+    extras_require={
+        "test": [
+            "pytest",
+            "matplotlib"
+        ]
+    }
 )

@@ -8,7 +8,7 @@ from ezdxf.entities.hatch import Hatch
 from ezdxf.entities.polyline import Polyline
 from matplotlib import pyplot as plt
 
-from src.dxf_builder import DxfBuilder
+from dxf_builder import DxfBuilder
 from .data import shapes
 
 
